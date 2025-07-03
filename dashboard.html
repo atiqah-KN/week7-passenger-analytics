@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Passenger Analytics</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    h1 { color: #1f3b8c; }
+    canvas { max-width: 100%; margin-bottom: 30px; }
+  </style>
+</head>
+<body>
+  <h1>🚖 Passenger Ride Analytics</h1>
+  <canvas id="fareChart"></canvas>
+  <canvas id="distanceChart"></canvas>
+  <canvas id="rideChart"></canvas>
+
+  <script>
+    fetch('http://localhost:3000/analytics/passengers')
+      .then(res => res.json())
+      .then(data => {
+        const names = data.map(d => d.name);
+        const fares = data.map(d => d.totalFare);
+        const rides = data.map(d => d.totalRides);
+        const distances = data.map(d => d.avgDistance);
+
+        new Chart(document.getElementById('fareChart'), {
+          type: 'bar',
+          data: {
+            labels: names,
+            datasets: [{ label: 'Total Fare (RM)', data: fares, backgroundColor: 'orange' }]
+          }
+        });
+
+        new Chart(document.getElementById('distanceChart'), {
+          type: 'bar',
+          data: {
+            labels: names,
+            datasets: [{ label: 'Average Distance (KM)', data: distances, backgroundColor: 'green' }]
+          }
+        });
+
+        new Chart(document.getElementById('rideChart'), {
+          type: 'bar',
+          data: {
+            labels: names,
+            datasets: [{ label: 'Total Rides', data: rides, backgroundColor: 'blue' }]
+          }
+        });
+      })
+      .catch(err => document.body.innerHTML += "<p style='color:red'>❌ Failed to load data</p>");
+  </script>
+</body>
+</html>
